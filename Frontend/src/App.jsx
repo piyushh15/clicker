@@ -2,6 +2,7 @@ import {  BrowserRouter as Router,Route,Routes , } from 'react-router-dom'
 import Home from './screens/Home'
 import Login from './screens/Login'
 import Signup from './screens/Signup'
+import Dataviewer from './screens/Dataviewer'
 
 const App = () => {
   return (
@@ -11,7 +12,7 @@ const App = () => {
         <Route exact path="/" element={<Home/>}></Route>
         <Route exact path="/login" element={<Login/>}></Route>
         <Route exact path="/createuser" element={<Signup/>}></Route>
-        {/* <Route exact path="/data" element={<CarPlateViewer/>}></Route> */}
+        <Route exact path="/data" element={<Dataviewer/>}></Route>
       </Routes>
     </div>
 

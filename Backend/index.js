@@ -10,6 +10,7 @@ const jwtsecret="mynameispiyushnicetomeetyou";
 const User = require('./models/User');
 const { body,validationResult} = require('express-validator');
 const Click=require('./models/Click')
+const moment = require('moment'); // Require the 'moment' library for date and time manipulation
 
 
 mongoose.connect(mongourl, { useNewUrlParser: true, useUnifiedTopology: true })
@@ -148,29 +149,38 @@ const authenticateUser = (req, res, next) => {
 
 
   app.post('/upload', checkUser, async (req, res) => {
-    try {
-      const dataArray = req.body; // Assuming req.body is an array of JSON objects
+      try {
+          const dataArray = req.body; // Assuming req.body is an array of JSON objects
   
-      for (const data of dataArray) {
-        const { id, timestamp } = data;
-        const userId = req.headers['user-id']; // Assuming this header contains the user ID
-        const timestampDate = new Date(timestamp);
+          for (const data of dataArray) {
+              const { id, timestamp } = data;
+              const userId = req.headers['user-id']; // Assuming this header contains the user ID
+              
+              // Convert timestamp to JavaScript Date object
+              const timestampDate = new Date(timestamp);
   
-        const click = new Click({
-          UserData: userId,
-          device_id: id,
-          timestamp: timestampDate
-        });
+              // Extract date and time components
+              const date = moment(timestampDate).format('YYYY-MM-DD');
+              const time = moment(timestampDate).format('HH:mm:ss');
   
-        await click.save();
+              // Create and save the Click document
+              const click = new Click({
+                  UserData: userId,
+                  device_id: id,
+                  date: date, // Store the date component
+                  time: time, // Store the time component
+              });
+  
+              await click.save();
+          }
+  
+          return res.status(200).json({ message: 'Data saved successfully.' });
+      } catch (error) {
+          console.error("Error:", error);
+          return res.status(500).json({ error: 'Error saving to the database.' });
       }
-  
-      return res.status(200).json({ message: 'Data saved successfully.' });
-    } catch (error) {
-      console.error("Error:", error);
-      return res.status(500).json({ error: 'Error saving to the database.' });
-    }
   });
+  
   
 
   
@@ -178,7 +188,7 @@ const authenticateUser = (req, res, next) => {
 app.get('/data', authenticateUser, async (req, res) => {
     try {
       const data = await Click.find({ 'UserData': req.user }); 
-      console.log(data);
+      //console.log(data);
       console.log(req.user);
       return res.status(200).json(data);
     } catch (error) {

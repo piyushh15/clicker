@@ -25,7 +25,7 @@ const Navbar = () => {
     <header className='padding-x py-8 absolute z-10 w-full'>
       <nav className='flex justify-between items-center max-container'>
         <a href="/">
-          <span className="font-montserrat">Clicker</span>
+          <span className="font-montserrat">SecureCar</span>
         </a>
 
         <ul className='flex-1 flex justify-end items-center gap-16 max-lg:hidden'>
