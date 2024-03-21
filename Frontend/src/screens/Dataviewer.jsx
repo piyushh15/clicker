@@ -82,7 +82,7 @@ const Dataviewer = () => {
                         ticks: {
                             font: {
                                 weight: 'bold', // Make y-axis labels bold
-                                color:'black'
+                                color:'black' // Set y-axis label color to black
                             }
                         }
                     },
@@ -90,12 +90,20 @@ const Dataviewer = () => {
                         ticks: {
                             font: {
                                 weight: 'bold', // Make x-axis labels bold
-                                color:'black'
+                                color:'black' // Set x-axis label color to black
                             }
                         }
                     }
                 },
                 plugins: {
+                    legend: {
+                        labels: {
+                            color: 'black', // Set legend label color to black
+                            font: {
+                                weight: 'bold' // Make legend label bold
+                            }
+                        }
+                    },
                     tooltip: {
                         enabled: true,
                         titleFont: { weight: 'bold', color: 'black' },
@@ -179,6 +187,11 @@ const Dataviewer = () => {
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
+                legend: {
+                    labels: {
+                        color: 'black' // Set label color to black
+                    }
+                },
                 tooltips: {
                     callbacks: {
                         label: (tooltipItem, data) => {
@@ -197,15 +210,17 @@ const Dataviewer = () => {
     
     return (
         <div className='padding text-center font-montserrat'>
-            <h1 className='font-montserrat font-bold text-2xl'>Footfall Counter</h1>
+            <h1 className='font-montserrat font-bold text-2xl bg-primary rounded-xl'>Footfall Counter</h1>
 
             <div className='flex  flex-col '>
-                <div className='w-100'>
+                <div className='w-100 bg-primary'>
                     <canvas className=''id="clicksPerDateChart"></canvas>
                 </div>
-                <div className='padding flex justify-center items-center flex-col'>
+
+
+                <div className='padding flex justify-center items-center flex-col bg-primary paddin'>
                     <h2 className='font-palanquin font-bold text-2xl'>Select Date for Pie Chart showing footfall according to time:</h2>
-                    <select className="border-slate-950 border-solid" value={selectedDate} onChange={handleDateSelect}>
+                    <select className="border-slate-950 border-solid " value={selectedDate} onChange={handleDateSelect}>
                         <option value="">Select a Date</option>
                         {/* Populate dropdown with available dates */}
                         {Array.from(new Set(clickData.map(entry => entry.date))).map(date => (
@@ -213,10 +228,10 @@ const Dataviewer = () => {
                         ))}
                     </select>
                 </div>
-                <div className='flex justify-center items-center'>
-                    {selectedDate && <button className='flex w-40 justify-center items-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600'onClick={renderPieChart}>Generate Pie Chart</button>}
+                <div className='flex justify-center items-center bg-primary'>
+                    {selectedDate && <button className='flex w-40 justify-center items-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-black shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600'onClick={renderPieChart}>Generate Pie Chart</button>}
                 </div>
-                <div>
+                <div className='bg-primary padding rounded-xl'>
                     <canvas id="hourlyPieChart" width="400" height="400"></canvas>
                 </div>
             </div>

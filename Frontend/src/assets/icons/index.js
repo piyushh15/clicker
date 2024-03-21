@@ -6,6 +6,7 @@ import instagram from './instagram.svg'
 
 import twitter from './twitter.svg'
 import footerLogo from './footer-logo.svg'
+// import homephoto from './homephoto'
 
 export {
    

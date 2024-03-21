@@ -4,13 +4,13 @@ import {footerLinks, socialMedia} from "../constants"
 
 const Footer = () => {
   return (
-   <footer className="max-container"> 
+   <footer className=""> 
       <div className="flex justify-between items-start gap-20 flex-wrap max-lg:flex-col">
           <div className="flex flex-col items-start">
             <a href="/">
-              <img src={footerLogo} width={150} height={46}></img>
+              <span className="text-white font-madimi text-4xl">Clicker</span>
             </a>
-            <p className="text-white-400 mt-6 text-base leading-7 font-montserrat sm:max-w-sm">Get shoes ready for the new term at your at your nearest Nike store.Find Your perfect Size In Store.Get Rewards</p>
+            <p className="text-white-400 mt-6 text-base leading-7 font-montserrat sm:max-w-sm">Lorem ipsum dolor sit amet consectetur adipisicing elit. Laudantium deleniti totam ipsum doloremque eligendi perferendis aut mollitia, sunt sapiente repudiandae minima nostrum! Sint fugit, dolor unde similique fugiat explicabo dolores.</p>
             <div className="flex items-center gap-5 mt-8">
               {socialMedia.map((icon)=>(
                 <div className="flex justify-center items-center w-12 h-12 bg-white rounded-full">

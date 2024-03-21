@@ -25,20 +25,20 @@ const Navbar = () => {
     <header className='padding-x py-8 absolute z-10 w-full'>
       <nav className='flex justify-between items-center max-container'>
         <a href="/">
-          <span className="font-montserrat">SecureCar</span>
+          <span className="font-madimi text-white text-4xl ">Clicker</span>
         </a>
 
         <ul className='flex-1 flex justify-end items-center gap-16 max-lg:hidden'>
-          <li className="list-none"><Link className="font-montserrat" aria-current="page" to="/">Home</Link></li>
+          <li className="list-none"><Link className="font-madimi text-white text-2xl" aria-current="page" to="/">Home</Link></li>
           {isLoggedIn ? (
             <>
-              <li className="list-none"><Link className="font-montserrat" aria-current="page" to="/data">Data</Link></li>
-              <li className="list-none"><button className="font-montserrat" onClick={handleLogout}>Logout</button></li>
+              <li className="list-none"><Link className="font-madimi text-white text-2xl" aria-current="page" to="/data">Data</Link></li>
+              <li className="list-none"><button className="font-madimi text-white text-2xl" onClick={handleLogout}>Logout</button></li>
             </>
           ) : (
             <>
-              <li className="list-none"><Link className="font-montserrat" aria-current="page" to="/login">Login</Link></li>
-              <li className="list-none"><Link className="font-montserrat" aria-current="page" to="/createuser">SignUp</Link></li>
+              <li className="list-none"><Link className="font-madimi text-white text-2xl" aria-current="page" to="/login">Login</Link></li>
+              <li className="list-none"><Link className="font-madimi text-white text-2xl" aria-current="page" to="/createuser">SignUp</Link></li>
             </>
           )}
         </ul>

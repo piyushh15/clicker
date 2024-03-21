@@ -9,7 +9,7 @@ const Home = () => {
         <section className="padding " >
             <Body/>
         </section>
-        <section  className=" padding-x padding-t pb-8 bg-black">
+        <section  className=" padding-x padding-t pb-8max-container bg-gradient-to-l from-custom-blue to-custom-black">
             <Footer/>
         </section>
     </main>
