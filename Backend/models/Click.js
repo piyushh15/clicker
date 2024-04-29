@@ -1,19 +1,17 @@
 const mongoose = require('mongoose');
-
-const ClickSchema = new mongoose.Schema({
-    UserData: { type: mongoose.Schema.Types.ObjectId, ref: 'UserData', required: true },
-    device_id: {
+const clickSchema = new mongoose.Schema({
+    gateway_id: {
         type: String,
         required: true
     },
-    date: {
-        type: String, 
+    timestamp: {
+        type: Date,
         required: true
     },
-    time: {
-        type: String, 
+    clicker_id: {
+        type: String,
         required: true
     }
 });
-
-module.exports = mongoose.model('Click', ClickSchema);
+const Click = mongoose.model('Click', clickSchema);
+module.exports = Click;

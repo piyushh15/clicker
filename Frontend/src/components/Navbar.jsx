@@ -52,3 +52,7 @@ const Navbar = () => {
 }
 
 export default Navbar;
+
+
+//what to do?
+//in dataviewer first present the gate we want to select then on choosing that gate present all the pie chart and bar graph related to it 

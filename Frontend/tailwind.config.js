@@ -31,7 +31,7 @@ export default {
         "white-400": "rgba(255, 255, 255, 0.80)",
         "black-blur": "#4D4855",
         "blue-new":"#41C9E2",
-        "custom-blue":"#000066",
+        "custom-blue":"#002660",
         "custom-end-blue":"#6699ff",
         "violet-new":"#00224D",
         "custom-black":"#030d19",

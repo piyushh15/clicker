@@ -1,26 +1,41 @@
-import  { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import Chart from 'chart.js/auto';
 import axios from 'axios';
 
 const Dataviewer = () => {
+    const [gateways, setGateways] = useState([]);
+    const [selectedGateway, setSelectedGateway] = useState('');
     const [clickData, setClickData] = useState([]);
     const [selectedDate, setSelectedDate] = useState('');
-    const [hourlyData, setHourlyData] = useState([]);
 
     useEffect(() => {
-        fetchData();
+        fetchGateways();
     }, []);
 
-    const fetchData = async () => {
+    const fetchGateways = async () => {
+        try {
+            const authToken = localStorage.getItem('authToken');
+            const headers = { Authorization: authToken };
+            const response = await axios.get('https://backend-clicker.onrender.com/gateways', { headers });
+            setGateways(response.data.flat());
+        } catch (error) {
+            console.error('Error fetching gateways:', error);
+        }
+    };
+
+
+    const handleGatewaySelect = async (gatewayId) => {
+        setSelectedGateway(gatewayId);
         try {
             const authToken = localStorage.getItem('authToken');
             const headers = {
                 Authorization: authToken,
+                GatewayId: gatewayId,
             };
             const response = await axios.get('https://backend-clicker.onrender.com/data', { headers });
             setClickData(response.data);
         } catch (error) {
-            console.error('Error fetching data:', error);
+            console.error('Error fetching click data:', error);
         }
     };
 
@@ -30,49 +45,44 @@ const Dataviewer = () => {
         }
     }, [clickData]);
 
-    useEffect(() => {
-        if (selectedDate !== '') {
-            filterHourlyData(selectedDate);
-        }
-    }, [selectedDate]);
+
+    const handleDateSelect = (e) => {
+        setSelectedDate(e.target.value);
+    };
+
 
     const renderBarChart = () => {
-        const groupedData = {};
+        const groupedData = new Map();
+
         clickData.forEach(entry => {
-            const date = entry.date;
-            if (groupedData[date]) {
-                groupedData[date]++;
+            const dateString = new Date(entry.timestamp).toISOString().split('T')[0];
+            if (groupedData.has(dateString)) {
+                groupedData.set(dateString, groupedData.get(dateString) + 1);
             } else {
-                groupedData[date] = 1;
+                groupedData.set(dateString, 1);
             }
         });
-    
-        const labels = Object.keys(groupedData);
-        const data = Object.values(groupedData);
-    
-        // Get canvas element
-        const canvas = document.getElementById('clicksPerDateChart');
+
+        const labels = Array.from(groupedData.keys());
+        const data = Array.from(groupedData.values());
+        const canvas = document.getElementById('barChart');
         const ctx = canvas.getContext('2d');
-    
-        // Destroy existing chart if it exists
+
         if (canvas.chart) {
             canvas.chart.destroy();
         }
-    
-        // Render the bar chart
+
         canvas.chart = new Chart(ctx, {
             type: 'bar',
             data: {
-                labels: labels, 
-                borderWidth: 2,
-                borderRadius: 5,
+                labels: labels,
                 datasets: [{
                     label: 'Clicks per Date',
                     data: data,
                     backgroundColor: 'rgba(75, 192, 192, 0.2)',
                     borderColor: 'rgba(5, 192, 192, 1)',
                     borderWidth: 2,
-                    borderRadius:14,
+                    borderRadius: 14,
                 }]
             },
             options: {
@@ -81,16 +91,16 @@ const Dataviewer = () => {
                         beginAtZero: true,
                         ticks: {
                             font: {
-                                weight: 'bold', // Make y-axis labels bold
-                                color:'black' // Set y-axis label color to black
+                                weight: 'bold', 
+                                color: 'black' 
                             }
                         }
                     },
                     x: {
                         ticks: {
                             font: {
-                                weight: 'bold', // Make x-axis labels bold
-                                color:'black' // Set x-axis label color to black
+                                weight: 'bold', 
+                                color: 'black' 
                             }
                         }
                     }
@@ -98,9 +108,9 @@ const Dataviewer = () => {
                 plugins: {
                     legend: {
                         labels: {
-                            color: 'black', // Set legend label color to black
+                            color: 'black', 
                             font: {
-                                weight: 'bold' // Make legend label bold
+                                weight: 'bold' 
                             }
                         }
                     },
@@ -115,56 +125,43 @@ const Dataviewer = () => {
     };
 
 
-    const filterHourlyData = (date) => {
-        const filteredData = clickData.filter(entry => entry.date === date);
-        const hourlyCounts = new Array(24).fill(0);
-        filteredData.forEach(entry => {
-            const timeParts = entry.time.split(':');
-            const hour = parseInt(timeParts[0]); // Extract hour from the time
-            if (!isNaN(hour) && hour >= 0 && hour < 24) {
-                hourlyCounts[hour]++;
-            }
-        });
-        setHourlyData(hourlyCounts);
-    };
-    
-
-
-
-
-    const handleDateSelect = (e) => {
-        setSelectedDate(e.target.value);
-    };
 
     const renderPieChart = () => {
-        // Get the canvas element
-        const canvas = document.getElementById('hourlyPieChart');
+
+        const selectedData = clickData.filter(entry => {
+            const entryDate = new Date(entry.timestamp);
+            const dateString = entryDate.toISOString().split('T')[0];
+            return dateString === selectedDate;
+        });
+
+
+        const hourlyCounts = new Array(24).fill(0);
+        selectedData.forEach(entry => {
+            const time = entry.timestamp.split('T')[1].split('.')[0];
+            const hour = parseInt(time.split(':')[0]);
+            hourlyCounts[hour]++;
+        });
+
+
+        const hourLabels = [...Array(24).keys()].map(hour => `${hour}:00 - ${hour + 1}:00`);
+
+        const canvas = document.getElementById('pieChart');
         const ctx = canvas.getContext('2d');
-    
-        // Destroy the previous chart if it exists
+
         if (canvas.chart) {
             canvas.chart.destroy();
         }
-    
-        // Clear the canvas
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-    
-        // Check if no data is available for the selected date
-        if (hourlyData.length === 0) {
-            // Exit early if no data is available
+
+        if (hourlyCounts.every(count => count === 0)) {
             return;
         }
-    
-        // Prepare labels for each hour
-        const hourLabels = [...Array(24).keys()].map(hour => `${hour}:00 - ${hour + 1}:00`);
-    
-        // Render the pie chart with tooltips
+
         canvas.chart = new Chart(ctx, {
-            type: 'pie', // Use 'doughnut' type for a circle pie chart
+            type: 'pie',
             data: {
                 labels: hourLabels,
                 datasets: [{
-                    data: hourlyData,
+                    data: hourlyCounts,
                     backgroundColor: [
                         'rgba(25, 99, 132, 0.5)',
                         'rgba(54, 162, 235, 0.5)',
@@ -189,7 +186,7 @@ const Dataviewer = () => {
                 maintainAspectRatio: false,
                 legend: {
                     labels: {
-                        color: 'black' // Set label color to black
+                        color: 'black'
                     }
                 },
                 tooltips: {
@@ -205,37 +202,45 @@ const Dataviewer = () => {
             }
         });
     };
-    
-    
-    
+
+
+
+
     return (
         <div className='padding text-center font-montserrat'>
             <h1 className='font-montserrat font-bold text-2xl bg-primary rounded-xl'>Footfall Counter</h1>
-
-            <div className='flex  flex-col '>
-                <div className='w-100 bg-primary'>
-                    <canvas className=''id="clicksPerDateChart"></canvas>
-                </div>
-
-
-                <div className='padding flex justify-center items-center flex-col bg-primary paddin'>
-                    <h2 className='font-palanquin font-bold text-2xl'>Select Date for Pie Chart showing footfall according to time:</h2>
-                    <select className="border-slate-950 border-solid " value={selectedDate} onChange={handleDateSelect}>
-                        <option value="">Select a Date</option>
-                        {/* Populate dropdown with available dates */}
-                        {Array.from(new Set(clickData.map(entry => entry.date))).map(date => (
-                            <option key={date} value={date}>{date}</option>
-                        ))}
-                    </select>
-                </div>
-                <div className='flex justify-center items-center bg-primary'>
-                    {selectedDate && <button className='flex w-40 justify-center items-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-black shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600'onClick={renderPieChart}>Generate Pie Chart</button>}
-                </div>
-                <div className='bg-primary padding rounded-xl'>
-                    <canvas id="hourlyPieChart" width="400" height="400"></canvas>
-                </div>
+            <div className=' px-1 pb-10 flex justify-center items-center flex-col bg-primary paddin'>
+                <h2 className='font-palanquin font-bold text-2xl'>Select Gateway:</h2>
+                <select className="border-slate-950 border-solid" value={selectedGateway} onChange={(e) => handleGatewaySelect(e.target.value)}>
+                    <option value="">Select a Gateway</option>
+                    {gateways.map((gatewayId, index) => (
+                        <option key={index} value={gatewayId}>{gatewayId}</option>
+                    ))}
+                </select>
             </div>
-           
+            {selectedGateway && (
+                <>
+                    <div className='w-100 bg-primary'>
+                        <canvas id="barChart"></canvas>
+                    </div>
+                    <div className='pt-10 pb-10 flex justify-center items-center flex-col bg-primary paddin'>
+                        <h2 className='font-palanquin font-bold text-2xl'>Select Date for Pie Chart showing footfall according to time:</h2>
+                        <select className="border-slate-950 border-solid" value={selectedDate} onChange={handleDateSelect}>
+                            <option value="">Select a Date</option>
+                            {Array.from(new Set(clickData.map(entry => new Date(entry.timestamp).toISOString().split('T')[0]))).map(date => (
+                                <option key={date} value={date}>{date}</option>
+                            ))}
+                        </select>
+
+                    </div>
+                    <div className='flex justify-center items-center bg-primary'>
+                        {selectedDate && <button onClick={renderPieChart} className='flex w-40 justify-center items-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-black shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600'>Generate Pie Chart</button>}
+                    </div>
+                    <div className='bg-primary padding rounded-xl'>
+                        <canvas id="pieChart"></canvas>
+                    </div>
+                </>
+            )}
         </div>
     );
 };

@@ -7,7 +7,6 @@ const Login = () => {
 
     const handleSubmit=async (e)=>{
         e.preventDefault();   //It prevents the default form submission behavior using e.preventDefault() to avoid a page reload.
-        //it sends a POST request to a server endpoint (http://localhost:5000/api/loginuser) with the user's email and password as JSON data in the request body.
         const response= await fetch("https://backend-clicker.onrender.com/loginuser",{  
             method:'POST',
             headers:{
@@ -23,6 +22,7 @@ const Login = () => {
         if(json.success){
           //If the login is successful (json.success is true), it stores an authentication token (json.authToken) in the browser's local storage using localStorage.setItem.
           // This token is typically used to authenticate the user for subsequent requests.
+          console.log(json.authToken);
           localStorage.setItem("authToken",json.authToken);
           navigate("/");
         }

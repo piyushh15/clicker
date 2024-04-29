@@ -1,15 +1,23 @@
 const mongoose = require('mongoose');
-const UserDataSchema = new mongoose.Schema({
-    name: {type: String, 
-        required: true },
-    email:{type:String},
-    password:{type:String},
-    data:{
-        type:Date,
-        default:Date.now
-    },
- 
-});
-const UserData = mongoose.model('UserData', UserDataSchema);
 
-module.exports = UserData;
+const UserSchema = new mongoose.Schema({
+    name: {
+        type: String,
+        required: true
+    },
+    email: {
+        type: String,
+        required: true,
+        unique: true 
+    },
+    password: {
+        type: String,
+        required: true
+    },
+    gateways: {
+        type: [String], // Array of strings to store gateway IDs
+        default: [] 
+    },
+});
+
+module.exports = mongoose.model('User', UserSchema);
