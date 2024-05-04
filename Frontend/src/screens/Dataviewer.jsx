@@ -207,7 +207,7 @@ const Dataviewer = () => {
 
 
     return (
-        <div className='padding text-center font-montserrat'>
+        <div className='padding text-center font-montserrat min-h-screen'>
             <h1 className='font-montserrat font-bold text-2xl bg-primary rounded-xl'>Footfall Counter</h1>
             <div className=' px-1 pb-10 flex justify-center items-center flex-col bg-primary paddin'>
                 <h2 className='font-palanquin font-bold text-2xl'>Select Gateway:</h2>
@@ -220,7 +220,7 @@ const Dataviewer = () => {
             </div>
             {selectedGateway && (
                 <>
-                    <div className='w-100 bg-primary'>
+                    <div className='w-100  bg-primary'>
                         <canvas id="barChart"></canvas>
                     </div>
                     <div className='pt-10 pb-10 flex justify-center items-center flex-col bg-primary paddin'>
